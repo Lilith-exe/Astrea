@@ -1,5 +1,4 @@
 # Planned updates:
-# Player acceleration
 # Weapon powerups
 # Shield powerups (rainbow?)
 # Triangular hitbox
@@ -8,6 +7,9 @@
 # Audio
 # Start screen
 # Difficulty progression
+# Hardcore mode (asteroids wrap)
+# Invulnerability when wrapping
+# Resolution select
 
 import pygame
 import constants

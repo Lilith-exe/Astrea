@@ -9,7 +9,13 @@ class Shot(circleshape.CircleShape):
         self.velocity = pygame.Vector2(0, 0)
             
     def draw(self, screen):
-            pygame.draw.circle(screen, (179,235,242), (self.position.x, self.position.y), self.radius, 2)
+        pygame.draw.circle(screen, (179,235,242), (self.position.x, self.position.y), self.radius, 2)
+#        super().draw(screen)
         
     def update(self, dt):
-          self.position += self.velocity * dt
+#        self.lifetime -= dt
+#        if self.lifetime <= 0:
+#            self.alive = False
+#            return
+        self.position += self.velocity * dt
+#        self.wrap_position()
