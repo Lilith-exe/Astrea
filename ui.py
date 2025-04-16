@@ -1,4 +1,6 @@
 import pygame.font
+import constants
+import player
 
 class UI:
     def __init__(self):
@@ -20,3 +22,18 @@ class UI:
         reset_text = self.font.render("Press 'R' to reset", True, (195,177,225))
         reset_rect = reset_text.get_rect(center=(x, y + 100))
         screen.blit(reset_text, reset_rect)
+
+    def draw_lives(self, screen, player):
+        life_x = constants.SCREEN_WIDTH - 30
+        life_y = 30
+        # Create triangle
+        for i in range(player.lives):
+            forward = pygame.Vector2(0, 1).rotate(-90)
+            right = pygame.Vector2(0, 1).rotate(0) * 5
+            a = pygame.Vector2(life_x, life_y) + forward * 10
+            b = pygame.Vector2(life_x, life_y) - forward * 10 - right
+            c = pygame.Vector2(life_x, life_y) - forward * 10 + right
+            # Draw lives indicator
+            pygame.draw.polygon(screen, (255, 192, 203), [a, b, c], 2)
+            # Space horizontally
+            life_x -= 25

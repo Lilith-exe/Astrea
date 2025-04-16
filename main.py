@@ -1,3 +1,15 @@
+# Planned updates:
+# Multiple lives system
+# Player acceleration
+# Weapon powerups
+# Shield powerups (rainbow?)
+# Triangular hitbox
+# High score system
+# More visuals
+# Audio
+# Start screen
+# Difficulty progression
+
 import pygame
 import constants
 import asteroid 
@@ -5,6 +17,7 @@ import player
 import asteroidfield
 import sys
 import bullet
+import time
 from constants import *
 from player import Player
 from asteroid import Asteroid
@@ -34,6 +47,7 @@ def main():
     Asteroid.containers = (updatable, drawable, asteroids)
     Shot.containers = (updatable)
 
+    # Reset handler
     def reset_game():
         nonlocal score, game_over, player, asteroid_field
         score = 0
@@ -50,6 +64,7 @@ def main():
     score = 0
     ui = UI()
     dt = 0
+    respawn_time = PLAYER_RESPAWN_TIME
     shot_timer = 0
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shots) 
     asteroid_field = AsteroidField() 
@@ -70,15 +85,22 @@ def main():
                         running = False
                     elif event.key == pygame.K_r:
                         player, asteroids, shots = reset_game()
-        if not game_over:   
+        if not game_over: 
+            # Draw section  
             screen.fill(color=(31,31,31))
             ui.draw_score(screen, score, 10, 10)
+            ui.draw_lives(screen, player)
             for item in drawable:
                 item.draw(screen)
+            # Update handler
             updatable.update(dt)
+            # Collision handler
             for asteroid in asteroids:
                 if player.collision(asteroid):
-                    game_over = True
+                    if player.invincibility_timer <=0:
+                        game_over = player.hit()
+                        if not game_over:
+                            asteroid.kill()
             for asteroid in asteroids:
                 for shot in shots:
                     if shot.collision(asteroid):
