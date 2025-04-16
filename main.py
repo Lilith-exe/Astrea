@@ -27,7 +27,7 @@ def main():
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2) 
     asteroid_field = AsteroidField()   
     while True:
-        screen.fill(color=(0,0,0))
+        screen.fill(color=(31,31,31))
         for item in drawable:
             item.draw(screen)
         updatable.update(dt)
