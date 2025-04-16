@@ -1,5 +1,4 @@
 # Planned updates:
-# Multiple lives system
 # Player acceleration
 # Weapon powerups
 # Shield powerups (rainbow?)
