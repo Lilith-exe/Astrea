@@ -10,6 +10,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from bullet import Shot
+from ui import UI
 
 
 
@@ -20,39 +21,78 @@ def main():
     print("Screen height:", SCREEN_HEIGHT)
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
-    dt = 0
-    shot_timer = 0
+
+    # Groups setup
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
-    shots = pygame.sprite.Group()    
+    shots = pygame.sprite.Group() 
+
+    # Container assignments   
     Player.containers = (updatable, drawable)
     AsteroidField.containers = (updatable)
     Asteroid.containers = (updatable, drawable, asteroids)
     Shot.containers = (updatable)
+
+    def reset_game():
+        nonlocal score, game_over, player, asteroid_field
+        score = 0
+        game_over = False
+        asteroids.empty()
+        shots.empty()
+        drawable.empty()
+        updatable.empty()
+        player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shots)  
+        asteroid_field = AsteroidField()
+        return player, asteroids, shots    
+
+    # Initialize variables  
+    score = 0
+    ui = UI()
+    dt = 0
+    shot_timer = 0
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shots) 
-    asteroid_field = AsteroidField()   
-    while True:
-        screen.fill(color=(31,31,31))
-        for item in drawable:
-            item.draw(screen)
-        updatable.update(dt)
-        for asteroid in asteroids:
-            if player.collision(asteroid):
-                print("Game over!")
-                sys.exit()
-        for asteroid in asteroids:
-            for shot in shots:
-                if shot.collision(asteroid):
-                    asteroid.split()
-                    shot.kill()
-        for shot in shots:
-            shot.draw(screen)
-        pygame.display.flip() 
-        dt = clock.tick(60) / 1000
+    asteroid_field = AsteroidField() 
+    running = True 
+    game_over = False
+    player, asteroids, shots = reset_game() 
+
+    # Game loop
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                running = False   
+            if not game_over:
+                pass
+            else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                    elif event.key == pygame.K_r:
+                        player, asteroids, shots = reset_game()
+        if not game_over:   
+            screen.fill(color=(31,31,31))
+            ui.draw_score(screen, score, 10, 10)
+            for item in drawable:
+                item.draw(screen)
+            updatable.update(dt)
+            for asteroid in asteroids:
+                if player.collision(asteroid):
+                    game_over = True
+            for asteroid in asteroids:
+                for shot in shots:
+                    if shot.collision(asteroid):
+                        asteroid.split()
+                        shot.kill()
+                        score += ASTEROID_POINTS
+            for shot in shots:
+                shot.draw(screen)
+        if game_over:
+            screen.fill((31,31,31))
+            ui.draw_game_over(screen, score, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        pygame.display.flip() 
+        dt = clock.tick(60) / 1000
+
 
 if __name__ == "__main__":
     main()
