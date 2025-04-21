@@ -21,12 +21,14 @@ import sys
 import bullet
 import time
 import version
+import game_data
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from bullet import Shot
 from ui import UI
+from game_data import save_game_data, load_game_data, settings_menu
 
 class GameState(enum.Enum):
     START_SCREEN = 0
@@ -40,15 +42,18 @@ class Game:
         self.state = GameState.START_SCREEN
         pygame.init()
         pygame.display.set_caption(f"Astrea - v{version.VERSION}")
+        game_data = load_game_data()
+        self.high_score = game_data["high_score"]
+        self.settings = game_data["settings"]
         print("Starting Asteroids!")
-        print("Screen width:", SCREEN_WIDTH)
-        print("Screen height:", SCREEN_HEIGHT)
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        print("Resolution:", self.settings["resolution"])
+        self.screen = pygame.display.set_mode(self.settings["resolution"])
         self.clock = pygame.time.Clock()
         # Flash timer for start screen
         self.flash_timer = 0
         self.show_start_text = True
         self.flash_speed = 0.5
+
 
         # Groups setup
         self.updatable = pygame.sprite.Group()
@@ -101,6 +106,11 @@ class Game:
                         self.state = GameState.PLAYING
                     elif event.key == pygame.K_ESCAPE:
                         self.running = False
+                    elif event.key == pygame.K_o:
+                        self.settings = settings_menu(self.screen, self.settings, self.high_score)
+                        self.state = GameState.START_SCREEN
+            elif self.state == GameState.SETTINGS:
+                pass
         
     def update(self, dt):
         self.dt = dt
@@ -142,6 +152,9 @@ class Game:
                 item.draw(self.screen)
             for shot in self.shots:
                 shot.draw(self.screen)
+
+        elif self.state == GameState.SETTINGS:
+            pass
         
         elif self.state == GameState.GAME_OVER:
             self.ui.draw_game_over(self.screen, self.score, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)

@@ -2,6 +2,8 @@ import pygame.font
 import constants
 import player
 import version
+import game_data
+import pygame
 
 pygame.font.init()
 
@@ -10,6 +12,7 @@ class UI:
         self.font = pygame.font.SysFont("Copperplate Gothic", 36)
         self.title_font = pygame.font.SysFont("Copperplate Gothic", 172, bold=1)
         self.version_font = pygame.font.SysFont("Lucida Console", 20)
+        self.heading_font = pygame.font.SysFont("Copperplate Gothic", 52, bold=1)
         self.version = version.VERSION
 
     def draw_version(self, screen):
@@ -48,8 +51,31 @@ class UI:
 
     def draw_start_text(self, screen):
         start_text = self.font.render("Press F to Start", True, (195, 177, 225))
-        start_text_rect = start_text.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT //2 + 100))
+        start_text_rect = start_text.get_rect(center=(constants.SCREEN_WIDTH // 2, constants.SCREEN_HEIGHT // 2 + 100))
         screen.blit(start_text, start_text_rect)
+
+    def draw_settings_menu(self, screen, options, selected_option, settings, name_selected=False, flash_visible=True):
+        screen.fill((31, 31, 31))
+        settings_text = self.heading_font.render("Settings", True, (255, 192, 203))
+        settings_text_rect = settings_text.get_rect(center=(constants.SCREEN_WIDTH // 2, 80))
+        screen.blit(settings_text, settings_text_rect)
+        for i, option in enumerate(options):
+            if i == 0:
+                text = option.format(int(settings["sound_volume"] * 100))
+            elif i == 1:
+                text = option.format(settings["difficulty"])
+            elif i == 2:
+                text = option.format(settings["player_name"])
+                if name_selected and flash_visible:
+                    text += "|"                    
+            elif i == 3:
+                text = option.format(settings["resolution"][0], settings["resolution"][1])
+            else:
+                text = option
+            color = (179, 235, 242) if i == selected_option else (195, 177, 225)
+            settings_body = self.font.render(text, True, color)
+            screen.blit(settings_body, (constants.SCREEN_WIDTH // 2 - constants.SCREEN_WIDTH // 2, 150 + i * 50))
+
 
     def draw_lives(self, screen, player):
         life_x = constants.SCREEN_WIDTH - 30
