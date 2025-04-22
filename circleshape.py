@@ -25,9 +25,9 @@ class CircleShape(pygame.sprite.Sprite):
     def collision(self, other_shape):
         return self.position.distance_to(other_shape.position) <= self.radius + other_shape.radius
     
-    def wrap_position(self):
-        screen_width = constants.SCREEN_WIDTH
-        screen_height = constants.SCREEN_HEIGHT
+    def wrap_position(self, position, screen):
+        x, y = position
+        screen_width, screen_height = screen.get_size()
 
         # Horizontal Wrapping
         if self.position.x < 0:
@@ -40,3 +40,5 @@ class CircleShape(pygame.sprite.Sprite):
             self.position.y = screen_height
         elif self.position.y > screen_height:
             self.position.y = 0
+
+        return pygame.Vector2(x, y)

@@ -5,11 +5,13 @@
 # High score system
 # More visuals
 # Audio
-# Start screen
 # Difficulty progression
 # Hardcore mode (asteroids wrap)
-# Invulnerability when wrapping
-# Resolution select
+# Resolution scaling
+# Parralax stars
+# More advanced enemy behavior?
+# Non round asteroids
+# Explosion effects
 
 import enum
 import pygame
@@ -78,14 +80,15 @@ class Game:
 
     # Reset handler
     def reset_game(self):
+        screen_width, screen_height = self.screen.get_size()
         self.score = 0
         self.game_over = False
         self.asteroids.empty()
         self.shots.empty()
         self.drawable.empty()
         self.updatable.empty()
-        self.player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, self.shots)  
-        self.asteroid_field = AsteroidField()
+        self.player = Player(screen_width / 2, screen_height / 2, self.shots, self.screen)  
+        self.asteroid_field = AsteroidField(self.screen)
         self.state = GameState.PLAYING          
 
     def handle_events(self):

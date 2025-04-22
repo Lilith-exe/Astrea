@@ -6,7 +6,7 @@ import math
 from bullet import Shot
 
 class Player(circleshape.CircleShape):
-    def __init__(self, x, y, shots):
+    def __init__(self, x, y, shots, screen):
         super().__init__(x, y, constants.PLAYER_RADIUS)
         self.rotation = 0
         self.velocity = pygame.Vector2(0, 0)
@@ -18,6 +18,7 @@ class Player(circleshape.CircleShape):
         self.max_speed = constants.PLAYER_MAX_SPEED
         self.acceleration = constants.PLAYER_ACCELERATION
         self.friction = constants.PLAYER_FRICTION
+        self.screen = screen
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -37,8 +38,8 @@ class Player(circleshape.CircleShape):
     def rotate(self, dt, PLAYER_TURN_SPEED):
         self.rotation = self.rotation + (PLAYER_TURN_SPEED * dt)
     
-    def update(self, dt):
-        self.wrap_position()
+    def update(self, dt, position = None, screen = None):
+        self.wrap_position(self.position, self.screen)
         self.shot_timer -= dt
         if self.invincibility_timer > 0:
             self.invincibility_timer -= dt
